@@ -1,0 +1,36 @@
+version: '3'
+services:
+  callisto-audit:
+    image: callisto/galileo-backend
+    volumes:
+      - ../../:/app/
+    ports:
+      - "8000:8000"
+    container_name: galileo-backend
+    restart: on-failure
+    environment:
+      - TERM=xterm
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DB_CALLISTO=${DB_CALLISTO}
+      - DB_USER=${DB_USER_CALLISTO}
+      - DB_PASS=${DB_PASS_CALLISTO}
+      - DB_HOST=${DB_HOST_CALLISTO}
+      - SPARKPOST_API_KEY=${SPARKPOST_API_KEY}
+    networks:
+      - callisto
+  galileo-backend-postgresql:
+    image: postgres:10.4
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    container_name: galileo-backend-postgresql
+    networks:
+      callisto:
+        aliases:
+          - galileo-backend-postgresql
+    volumes:
+      - /data/postgres-galileo-backend:/var/lib/postgresql/data
+networks:
+   callisto:
+     external: true

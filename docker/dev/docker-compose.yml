@@ -1,0 +1,35 @@
+version: '3'
+services:
+  callisto:
+    image: callisto/galileo-backend
+    volumes:
+      - ~/.ssh/id_rsa.pub:/tmp/authorized_keys
+      - ../../:/app/
+    ports:
+      - "2000:22"
+      - "8000:8000"
+    container_name: galileo-backend
+    environment:
+      - TERM=xterm
+      - SPARKPOST_API_KEY=callisto${SPARKPOST_API_KEY}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+    networks:
+      - callisto
+  galileo-backend-postgresql:
+    image: postgres:10.4
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=callisto
+      - POSTGRES_PASSWORD=callisto
+      - POSTGRES_DB=galileo-backend
+    container_name: galileo-backend-postgresql
+    networks:
+      callisto:
+        aliases:
+          - galileo-backend-postgresql
+    volumes:
+      - /data/postgres-galileo-backend:/var/lib/postgresql/data
+networks:
+   callisto:
+     external: true
