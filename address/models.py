@@ -39,7 +39,7 @@ class AddressName(TimeStampModel):
 class AddressCoinBalance(TimeStampModel):
     """
     * address_hash -> Foreign Key to Address | Foreign Key
-    * block_number -> Foreign Key to Block | Foreign Key
+    * block_number -> Number of the block | Big Int
     * value -> Value of address at the end of the Block
     * value_fetched_at -> When value was fetched
     """
@@ -48,10 +48,7 @@ class AddressCoinBalance(TimeStampModel):
         'Address',
         on_delete=models.PROTECT
     )
-    block_number = models.ForeignKey(
-        'blocks.Block',
-        on_delete=models.PROTECT
-    )
+    block_number = models.BigIntegerField()
     value = models.DecimalField(
         null=True
     )
@@ -59,4 +56,28 @@ class AddressCoinBalance(TimeStampModel):
         null=True
     )
 
+
+class AddressTokenBalance(TimeStampModel):
+    """
+    * address_hash -> Foreign Key to Address | Foreign Key
+    * block_number -> Number of the block | Big Int
+    * token_contract_address_hash -> Foreign Key to Token | Foreign Key
+    * value -> Value of address at the end of the Block
+    * value_fetched_at -> When value was fetched
+    """
+    address_hash = models.ForeignKey(
+        'Address',
+        on_delete=models.CASCADE
+    )
+    block_number = models.BigIntegerField()
+    token_contract_address_hash = models.ForeignKey(
+        'tokens.Token',
+        on_delete=models.CASCADE
+    )
+    value = models.DecimalField(
+        null=True
+    )
+    value_fetched_at = models.DateTimeField(
+        null=True
+    )
 
