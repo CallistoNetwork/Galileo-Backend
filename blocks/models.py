@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import BigIntegerRangeField
 from django.db import models
 
 from explorer.models import TimeStampModel
@@ -65,3 +66,16 @@ class SecondDegreeRelation(TimeStampModel):
         related_name='uncle_block_relation'
     )
     uncle_fetched_at = models.BigIntegerField()
+
+
+class BlockReward(TimeStampModel):
+    """
+    Represents the static reward given to the miner of a block in a range of
+    block numbers.
+
+    block_range -> Range of the block numbers
+    reward -> Reward given
+    """
+
+    block_range = BigIntegerRangeField()
+    reward = models.DecimalField()
