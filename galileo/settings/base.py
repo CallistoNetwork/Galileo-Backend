@@ -44,6 +44,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'currencies',
+    'address',
+    'blocks',
+    'exchanges',
+    'explorer',
+    'logs',
+    'market',
+    'smartcontracts',
+    'tokens',
+    'transactions',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'currencies.middlewares.TenantMiddleware',
 ]
 
 ROOT_URLCONF = 'galileo.urls'
