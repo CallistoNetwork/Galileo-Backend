@@ -1,3 +1,11 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Currency, Domain
+
+
+class CurrencyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'initials', 'schema_name')
+
+
+admin.site.register(Currency, CurrencyAdmin)
+admin.site.register(Domain)
