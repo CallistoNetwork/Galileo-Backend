@@ -53,7 +53,9 @@ class Transaction(TimeStampModel):
         null=True
     )
     cumulative_gas_used = models.DecimalField(
-        null=True
+        null=True,
+        max_digits=120,
+        decimal_places=100
     )
     created_contract_address_hash = models.ForeignKey(
         'address.Address',
@@ -72,10 +74,18 @@ class Transaction(TimeStampModel):
         null=True,
         related_name='transaction_from_address'
     )
-    gas = models.DecimalField()
-    gas_price = models.DecimalField()
+    gas = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
+    gas_price = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
     gas_used = models.DecimalField(
-        null=True
+        null=True,
+        max_digits=120,
+        decimal_places=100
     )
     hash = models.CharField(
         max_length=255
@@ -88,8 +98,14 @@ class Transaction(TimeStampModel):
         null=True
     )
     nonce = models.IntegerField()
-    r = models.DecimalField()
-    s = models.DecimalField()
+    r = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
+    s = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
     status = models.IntegerField(
         null=True
     )
@@ -100,7 +116,10 @@ class Transaction(TimeStampModel):
         related_name='transaction_to_address'
     )
     v = models.IntegerField()
-    value = models.DecimalField()
+    value = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
 
 
 class Fork(TimeStampModel):
@@ -174,10 +193,14 @@ class InternalTransaction(TimeStampModel):
         related_name='internal_transaction_from_address'
     )
     gas = models.DecimalField(
-        null=True
+        null=True,
+        max_digits=120,
+        decimal_places=100
     )
     gas_used = models.DecimalField(
-        null=True
+        null=True,
+        max_digits=120,
+        decimal_places=100
     )
     index = models.IntegerField()
     init = models.TextField()
@@ -198,4 +221,7 @@ class InternalTransaction(TimeStampModel):
     type = models.CharField(
         max_length=255
     )
-    value = models.DecimalField()
+    value = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )

@@ -24,9 +24,18 @@ class Block(TimeStampModel):
     | Decimal
     """
     consensus = models.BooleanField()
-    difficulty = models.DecimalField()
-    gas_limit = models.DecimalField()
-    gas_used = models.DecimalField()
+    difficulty = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
+    gas_limit = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
+    gas_used = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
     hash = models.CharField(
         max_length=255
     )
@@ -45,7 +54,10 @@ class Block(TimeStampModel):
     )
     size = models.IntegerField()
     timestamp = models.BigIntegerField()
-    total_difficulty = models.DecimalField()
+    total_difficulty = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
 
 
 class SecondDegreeRelation(TimeStampModel):
@@ -78,4 +90,7 @@ class BlockReward(TimeStampModel):
     """
 
     block_range = BigIntegerRangeField()
-    reward = models.DecimalField()
+    reward = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )

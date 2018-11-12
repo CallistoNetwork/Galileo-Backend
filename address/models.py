@@ -14,7 +14,10 @@ class Address(TimeStampModel):
     hash = models.CharField(
         max_length=255,
     )
-    coin_balance = models.DecimalField()
+    coin_balance = models.DecimalField(
+        max_digits=120,
+        decimal_places=100
+    )
     coin_balance_block = models.IntegerField()
 
 
@@ -50,7 +53,9 @@ class AddressCoinBalance(TimeStampModel):
     )
     block_number = models.BigIntegerField()
     value = models.DecimalField(
-        null=True
+        null=True,
+        max_digits=120,
+        decimal_places=100
     )
     value_fetched_at = models.DateTimeField(
         null=True
@@ -75,7 +80,9 @@ class AddressTokenBalance(TimeStampModel):
         on_delete=models.CASCADE
     )
     value = models.DecimalField(
-        null=True
+        null=True,
+        max_digits=120,
+        decimal_places=100
     )
     value_fetched_at = models.DateTimeField(
         null=True

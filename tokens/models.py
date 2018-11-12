@@ -24,7 +24,9 @@ class Token(TimeStampModel):
         blank=True
     )
     total_supply = models.DecimalField(
-        null=True
+        null=True,
+        max_digits=120,
+        decimal_places=100
     )
     decimals = models.PositiveIntegerField(
         null=True
@@ -55,7 +57,9 @@ class TokenTransfer(TimeStampModel):
     """
 
     amount = models.DecimalField(
-        null=True
+        null=True,
+        max_digits=120,
+        decimal_places=100
     )
     from_address_hash = models.ForeignKey(
         'address.Address',
