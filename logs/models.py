@@ -38,5 +38,6 @@ class Log(TimeStampModel):
         max_length=255
     ),
     transaction_hash = models.ForeignKey(
-        'transactions.Transaction'
+        'transactions.Transaction',
+        on_delete=models.CASCADE
     )

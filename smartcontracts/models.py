@@ -23,7 +23,8 @@ class SmartContract(TimeStampModel):
     optimization = models.BooleanField()
     source_code = models.TextField()
     address_hash = models.ForeignKey(
-        'address.Address'
+        'address.Address',
+        on_delete=models.PROTECT
     )
     abi = ArrayField(
         JSONField()
