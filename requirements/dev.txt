@@ -1,4 +1,4 @@
 -r base.txt
 
-django-extensions==2.1
+django-extensions==2.1.4
 bpython==0.17.1
