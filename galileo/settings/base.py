@@ -198,3 +198,5 @@ DATABASE_ROUTERS = (
 TENANT_MODEL = "currencies.Currency"
 TENANT_DOMAIN_MODEL = "currencies.Domain"
 
+# Parity Config
+PARITY_NODE_URL = 'ws://192.168.10.2:8546'

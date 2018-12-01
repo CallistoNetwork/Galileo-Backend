@@ -20,3 +20,6 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 # SECURE_DOMAIN = 'https://stg.callisto.network/'
+
+# Parity Config
+PARITY_NODE_URL = 'ws://192.168.10.2:8546'
