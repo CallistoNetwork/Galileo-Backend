@@ -17,10 +17,12 @@ class Address(TimeStampModel):
     coin_balance = models.DecimalField(
         max_digits=120,
         decimal_places=100,
-        blank=True
+        blank=True,
+        null=True
     )
     coin_balance_block = models.IntegerField(
-        blank=True
+        blank=True,
+        null=True
     )
 
 

@@ -23,7 +23,9 @@ class Block(TimeStampModel):
     * total_difficulty -> Total difficulty of the chain until this block
     | Decimal
     """
-    consensus = models.BooleanField()
+    consensus = models.BooleanField(
+        null=True
+    )
     difficulty = models.DecimalField(
         max_digits=120,
         decimal_places=100
@@ -37,7 +39,8 @@ class Block(TimeStampModel):
         decimal_places=100
     )
     hash = models.CharField(
-        max_length=255
+        max_length=255,
+        unique=True
     )
     miner = models.ForeignKey(
         'address.Address',
@@ -50,7 +53,9 @@ class Block(TimeStampModel):
     number = models.BigIntegerField()
     parent_hash = models.ForeignKey(
         'self',
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        to_field='hash',
+        null=True
     )
     size = models.IntegerField()
     timestamp = models.BigIntegerField()
