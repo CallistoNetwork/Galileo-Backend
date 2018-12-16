@@ -1,5 +1,7 @@
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
+from django.urls import reverse
 from django.views import View
 from rest_framework.views import APIView
 
@@ -121,9 +123,51 @@ class GetAddressInfoView(APIView):
 
 class GetBlockInfoView(APIView):
     def get(self, request, *args, **kwargs):
-        print(kwargs['hash'])
+        block_hash = kwargs['hash']
 
-        return JsonResponse({'hash': kwargs['hash']})
+        try:
+            block = Block.objects.get(hash=block_hash)
+        except ObjectDoesNotExist:
+            block_data = {}
+            return JsonResponse(status=404, data=block_data)
+
+        transactions = Transaction.objects.filter(
+            block_hash=block
+        )
+
+        block_data = {
+            'difficulty': block.difficulty,
+            'gas_limit': block.gas_limit,
+            'gas_used': block.gas_used,
+            'hash': block.hash,
+            'block_number': block.number,
+            'parent_hash': block.parent_hash.hash,
+            'size': block.size,
+            'total_difficulty': block.total_difficulty,
+            'transactions': [
+                {
+                    'hash': transaction.hash,
+                    'index': transaction.index,
+                    'from': transaction.from_address_hash.hash,
+                    'to': transaction.to_address_hash.hash,
+                    'transaction_url': reverse(
+                        'explorer:get_transaction_info',
+                        transaction.hash
+                    ),
+                    'from_url': reverse(
+                        'explorer:get_address_info',
+                        transaction.from_address_hash.hash
+                    ),
+                    'to_url': reverse(
+                        'explorer:get_transaction_info',
+                        transaction.to_address_hash.hash
+                    )
+
+                } for transaction in transactions
+            ]
+        }
+
+        return JsonResponse(data=block_data)
 
 
 class GetTransactionInfoView(APIView):

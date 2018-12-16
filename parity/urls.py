@@ -4,6 +4,8 @@ from .views import (
     SaveView, GetBlockInfoView, GetTransactionInfoView, GetAddressInfoView
 )
 
+app_name = 'explorer'
+
 urlpatterns = [
     path(
         '',
