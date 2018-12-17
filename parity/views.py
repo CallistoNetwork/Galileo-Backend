@@ -118,7 +118,22 @@ class SaveView(View):
 
 
 class GetAddressInfoView(APIView):
-    pass
+    def get(self, request, *args, **kwargs):
+        address_hash = kwargs['hash']
+
+        try:
+            address = Address.objects.get(
+                hash=address_hash
+            )
+        except ObjectDoesNotExist:
+            address_data = {}
+            return JsonResponse(status=404, data=address_data)
+
+        address_data = {
+            'hash': address.hash
+        }
+
+        return JsonResponse(data=address_data)
 
 
 class GetBlockInfoView(APIView):
