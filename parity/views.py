@@ -63,7 +63,9 @@ class SaveView(View):
         #     )
         #     transaction.gas = transaction_data['gas']
         #     transaction.gas_price = transaction_data['gasPrice']
-        #     transaction.gas_used = ''
+        #     transaction.gas_used = (
+        #        transaction_data['gas'] * transaction_data['gasPrice']
+        #     )
         #     transaction.hash = transaction_data['hash']
         #     transaction.index = transaction_data['transactionIndex']
         #     transaction.input = transaction_data['input']
@@ -186,4 +188,58 @@ class GetBlockInfoView(APIView):
 
 
 class GetTransactionInfoView(APIView):
-    pass
+    def get(self, request, *args, **kwargs):
+        transaction_hash = kwargs['hash']
+
+        try:
+            transaction = Transaction.objects.get(hash=transaction_hash)
+        except ObjectDoesNotExist:
+            transaction_data = {}
+            return JsonResponse(status=404, data=transaction_data)
+
+        transaction_data = {
+            'block_hash': transaction.block_hash.hash,
+            'block_number': transaction.block_number,
+            'created_contract_address_hash':
+                transaction.created_contract_address_hash.hash,
+            'error': transaction.error,
+            'from_address_hash': transaction.from_address_hash.hash,
+            'gas': transaction.gas,
+            'gas_price': transaction.gas_price,
+            'gas_used': transaction.gas_used,
+            'hash': transaction.hash,
+            'index': transaction.index,
+            'input': transaction.input,
+            'internal_transactions_indexed_at':
+                transaction.internal_transactions_indexed_at,
+            'nonce': transaction.nonce,
+            'r': transaction.r,
+            's': transaction.s,
+            'status': transaction.status,
+            'to_address_hash': transaction.to_address_hash.hash,
+            'v': transaction.v,
+            'value': transaction.value,
+            'block_url': reverse(
+                'explorer:get_block_info',
+                transaction.block_hash.hash
+            ),
+            'contract_address_hash': self.get_contract_address_url(
+                transaction.created_contract_address_hash.hash
+            ),
+            'from_address_url': reverse(
+                'explorer:get_address_info',
+                transaction.from_address_hash.hash
+            ),
+            'to_address_url': reverse(
+                'explorer:get_address_info',
+                transaction.to_address_hash.hash
+            )
+        }
+
+        return JsonResponse(transaction_data)
+
+    def get_contract_address_url(self, address_hash):
+        if not address_hash:
+            return ''
+
+        return reverse('explorer:get_address_info', address_hash)
