@@ -10,7 +10,7 @@ from web3 import Web3, WebsocketProvider
 from .utils import web3_to_dict
 
 from address.models import Address
-from blocks.models import Block
+from blocks.models import Block, SecondDegreeRelation
 from transactions.models import Transaction
 
 
@@ -28,10 +28,10 @@ class SaveView(View):
 
         block_data = web3_to_dict(block_info)
 
-        # miner = self.get_address(block_data['miner'])
-        #
-        # block = Block()
-        #
+        miner = self.get_address(block_data['miner'])
+
+        block = Block()
+
         # block.difficulty = block_data['difficulty']
         # block.gas_limit = block_data['gasLimit']
         # block.gas_used = block_data['gasUsed']
@@ -88,22 +88,30 @@ class SaveView(View):
         #
         #     miner = self.get_address(uncle_data['miner'])
         #
-        #     block = Block()
-        #
-        #     block.difficulty = uncle_data['difficulty']
-        #     block.gas_limit = uncle_data['gasLimit']
-        #     block.gas_used = uncle_data['gasUsed']
-        #     block.hash = uncle_data['hash']
-        #     block.miner = miner
-        #     block.nonce = uncle_data['nonce']
-        #     block.number = uncle_data['number']
-        #     block.parent_hash = Block.objects.filter(
+        #     uncle_block = Block()
+        #     uncle_block.consensus = False
+        #     uncle_block.difficulty = uncle_data['difficulty']
+        #     uncle_block.gas_limit = uncle_data['gasLimit']
+        #     uncle_block.gas_used = uncle_data['gasUsed']
+        #     uncle_block.hash = uncle_data['hash']
+        #     uncle_block.miner = miner
+        #     uncle_block.nonce = uncle_data['nonce']
+        #     uncle_block.number = uncle_data['number']
+        #     uncle_block.parent_hash = Block.objects.filter(
         #         hash=uncle_data['parentHash']
         #     )
-        #     block.size = uncle_data['size']
-        #     block.timestamp = uncle_data['timestamp']
-        #     block.total_difficulty = uncle_data['totalDifficulty']
-        #     block.save()
+        #     uncle_block.size = uncle_data['size']
+        #     uncle_block.timestamp = uncle_data['timestamp']
+        #     uncle_block.total_difficulty = uncle_data['totalDifficulty']
+        #     uncle_block.save()
+        #
+        #     SecondDegreeRelation.objects.get_or_create(
+        #         nephew_hash=block,
+        #         uncle_hash=uncle_block,
+        #         defaults={
+        #             'uncle_fetched_at': block.timestamp
+        #         }
+        #     )
 
         return JsonResponse(status=200, data=self.get_block(), safe=False)
 
