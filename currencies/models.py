@@ -10,6 +10,9 @@ class Currency(TenantMixin):
         max_length=50
     )
 
+    def __str__(self):
+        return f'{self.name} ({self.initials})'
+
 
 class Domain(DomainMixin):
     pass

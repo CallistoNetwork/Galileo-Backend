@@ -75,7 +75,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'galileo.urls'
+# ROOT_URLCONF = 'galileo.urls'
 
 TEMPLATES = [
     {
@@ -197,6 +197,9 @@ DATABASE_ROUTERS = (
 )
 TENANT_MODEL = "currencies.Currency"
 TENANT_DOMAIN_MODEL = "currencies.Domain"
+
+ROOT_URLCONF = 'galileo.urls'
+PUBLIC_SCHEMA_URLCONF = 'galileo.public_urls'
 
 # Parity Config
 PARITY_NODE_URL = 'ws://192.168.10.2:8546'

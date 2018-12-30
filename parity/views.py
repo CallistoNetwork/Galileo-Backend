@@ -3,7 +3,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
 from django.views import View
-from pandas.core import index
 from rest_framework.views import APIView
 
 from web3 import Web3, WebsocketProvider
