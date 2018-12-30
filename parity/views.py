@@ -31,8 +31,8 @@ class SaveView(View):
 
         miner = self.get_address(block_data['miner'])
 
+        # Create Block Instance
         block = Block()
-
         block.difficulty = block_data['difficulty']
         block.gas_limit = block_data['gasLimit']
         block.gas_used = block_data['gasUsed']
@@ -48,6 +48,7 @@ class SaveView(View):
         block.total_difficulty = block_data['totalDifficulty']
         block.save()
 
+        # Create transactions for block
         for transaction in block_data['transactions']:
             transaction_info = w3_client.eth.getTransaction(transaction)
             transaction_data = web3_to_dict(transaction_info)
@@ -82,6 +83,7 @@ class SaveView(View):
             transaction.value = transaction_data['value']
             transaction.save()
 
+        # Create uncle block if exists
         for uncle in block_data['uncles']:
             uncle_info = w3_client.eth.getBlock(uncle)
 
@@ -106,6 +108,7 @@ class SaveView(View):
             uncle_block.total_difficulty = uncle_data['totalDifficulty']
             uncle_block.save()
 
+            # Save relation between nephew and uncle
             SecondDegreeRelation.objects.get_or_create(
                 nephew_hash=block,
                 uncle_hash=uncle_block,
@@ -113,6 +116,8 @@ class SaveView(View):
                     'uncle_fetched_at': block.timestamp
                 }
             )
+
+            # Save transaction relation for uncle block
             transaction_index = 0
             for transaction in uncle_block['transactions']:
                 transaction = Transaction.objects.filter(hash=transaction)
