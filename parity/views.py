@@ -12,7 +12,7 @@ from .utils import web3_to_dict
 from address.models import Address
 from blocks.models import Block, SecondDegreeRelation
 from transactions.models import Transaction, Fork
-
+from decimal import Decimal
 
 import json
 
@@ -21,10 +21,11 @@ class SaveView(View):
 
     def get(self, request, *args, **kwargs):
         parity_url = settings.PARITY_NODE_URL
+        block_hash = kwargs['hash']
 
         w3_client = Web3(WebsocketProvider(parity_url))
 
-        block_info = w3_client.eth.getBlock('latest')
+        block_info = w3_client.eth.getBlock(block_hash)
 
         block_data = web3_to_dict(block_info)
 
@@ -54,10 +55,10 @@ class SaveView(View):
 
             transaction = Transaction()
 
-            transaction.block_hash = block.id
+            transaction.block_hash = block
             transaction.block_number = block.number
             transaction.cumulative_gas_used = ''
-            transaction.created_contract_address_hash = ''
+            transaction.created_contract_address_hash = None
             transaction.error = ''
             transaction.from_address_hash = self.get_address(
                 transaction_data['from']
@@ -79,7 +80,7 @@ class SaveView(View):
                 transaction_data['to']
             )
             transaction.v = transaction_data['v']
-            transaction.value = transaction_data['value']
+            transaction.value = Decimal(transaction_data['value'])
             transaction.save()
 
         # Create uncle block if exists
@@ -132,7 +133,7 @@ class SaveView(View):
 
                 transaction_index += 1
 
-        return JsonResponse(status=200, data=self.get_block(), safe=False)
+        return JsonResponse(status=200, data=block_data, safe=False)
 
     def get_address(self, address):
         """

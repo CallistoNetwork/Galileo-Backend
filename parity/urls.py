@@ -8,7 +8,7 @@ app_name = 'explorer'
 
 urlpatterns = [
     path(
-        '',
+        'save/<str:hash>/',
         SaveView.as_view(),
         name='save'
     ),

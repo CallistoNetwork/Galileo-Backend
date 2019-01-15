@@ -118,7 +118,7 @@ class Transaction(TimeStampModel):
     v = models.IntegerField()
     value = models.DecimalField(
         max_digits=120,
-        decimal_places=100
+        decimal_places=20
     )
 
 
