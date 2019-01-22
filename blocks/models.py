@@ -28,15 +28,15 @@ class Block(TimeStampModel):
     )
     difficulty = models.DecimalField(
         max_digits=120,
-        decimal_places=100
+        decimal_places=18
     )
     gas_limit = models.DecimalField(
         max_digits=120,
-        decimal_places=100
+        decimal_places=18
     )
     gas_used = models.DecimalField(
         max_digits=120,
-        decimal_places=100
+        decimal_places=18
     )
     hash = models.CharField(
         max_length=255,
@@ -61,7 +61,7 @@ class Block(TimeStampModel):
     timestamp = models.BigIntegerField()
     total_difficulty = models.DecimalField(
         max_digits=120,
-        decimal_places=100
+        decimal_places=18
     )
 
 
@@ -97,5 +97,5 @@ class BlockReward(TimeStampModel):
     block_range = BigIntegerRangeField()
     reward = models.DecimalField(
         max_digits=120,
-        decimal_places=100
+        decimal_places=18
     )
