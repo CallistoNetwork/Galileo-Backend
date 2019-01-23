@@ -55,7 +55,7 @@ class Transaction(TimeStampModel):
     cumulative_gas_used = models.DecimalField(
         null=True,
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
     created_contract_address_hash = models.ForeignKey(
         'address.Address',
@@ -76,16 +76,16 @@ class Transaction(TimeStampModel):
     )
     gas = models.DecimalField(
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
     gas_price = models.DecimalField(
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
     gas_used = models.DecimalField(
         null=True,
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
     hash = models.CharField(
         max_length=255
@@ -112,7 +112,7 @@ class Transaction(TimeStampModel):
     v = models.IntegerField()
     value = models.DecimalField(
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
 
 
@@ -189,12 +189,12 @@ class InternalTransaction(TimeStampModel):
     gas = models.DecimalField(
         null=True,
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
     gas_used = models.DecimalField(
         null=True,
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
     index = models.IntegerField()
     init = models.TextField()
@@ -217,5 +217,5 @@ class InternalTransaction(TimeStampModel):
     )
     value = models.DecimalField(
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )

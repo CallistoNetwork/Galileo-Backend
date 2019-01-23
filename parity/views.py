@@ -57,16 +57,18 @@ class SaveView(View):
 
             transaction.block_hash = block
             transaction.block_number = block.number
-            transaction.cumulative_gas_used = ''
+            # transaction.cumulative_gas_used = ''
             transaction.created_contract_address_hash = None
             transaction.error = ''
             transaction.from_address_hash = self.get_address(
                 transaction_data['from']
             )
-            transaction.gas = transaction_data['gas']
-            transaction.gas_price = transaction_data['gasPrice']
-            transaction.gas_used = (
-               transaction_data['gas'] * transaction_data['gasPrice']
+            transaction.gas = w3_client.fromWei(transaction_data['gas'], 'ether')
+            transaction.gas_price = w3_client.fromWei(
+                transaction_data['gasPrice'], 'ether'
+            )
+            transaction.gas_used = w3_client.fromWei(
+               transaction_data['gas'] * transaction_data['gasPrice'], 'ether'
             )
             transaction.hash = transaction_data['hash']
             transaction.index = transaction_data['transactionIndex']
@@ -75,12 +77,12 @@ class SaveView(View):
             transaction.nonce = transaction_data['nonce']
             transaction.r = transaction_data['r']
             transaction.s = transaction_data['s']
-            transaction.status = ''
+            # transaction.status = ''
             transaction.to_address_hash = self.get_address(
                 transaction_data['to']
             )
             transaction.v = transaction_data['v']
-            transaction.value = Decimal(transaction_data['value'])
+            transaction.value = w3_client.fromWei(transaction_data['value'], 'ether')
             transaction.save()
 
         # Create uncle block if exists

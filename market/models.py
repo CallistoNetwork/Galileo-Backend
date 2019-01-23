@@ -15,9 +15,9 @@ class MarketHistory(TimeStampModel):
     date = models.DateField()
     opening_price = models.DecimalField(
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
     closing_price = models.DecimalField(
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )

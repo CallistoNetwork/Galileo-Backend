@@ -16,7 +16,7 @@ class Address(TimeStampModel):
     )
     coin_balance = models.DecimalField(
         max_digits=120,
-        decimal_places=18,
+        decimal_places=0,
         blank=True,
         null=True
     )
@@ -60,7 +60,7 @@ class AddressCoinBalance(TimeStampModel):
     value = models.DecimalField(
         null=True,
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
     value_fetched_at = models.DateTimeField(
         null=True
@@ -87,7 +87,7 @@ class AddressTokenBalance(TimeStampModel):
     value = models.DecimalField(
         null=True,
         max_digits=120,
-        decimal_places=18
+        decimal_places=0
     )
     value_fetched_at = models.DateTimeField(
         null=True
