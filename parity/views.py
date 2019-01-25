@@ -63,12 +63,10 @@ class SaveView(View):
             transaction.from_address_hash = self.get_address(
                 transaction_data['from']
             )
-            transaction.gas = w3_client.fromWei(transaction_data['gas'], 'ether')
-            transaction.gas_price = w3_client.fromWei(
-                transaction_data['gasPrice'], 'ether'
-            )
-            transaction.gas_used = w3_client.fromWei(
-               transaction_data['gas'] * transaction_data['gasPrice'], 'ether'
+            transaction.gas = transaction_data['gas']
+            transaction.gas_price = transaction_data['gasPrice']
+            transaction.gas_used = (
+               transaction_data['gas'] * transaction_data['gasPrice']
             )
             transaction.hash = transaction_data['hash']
             transaction.index = transaction_data['transactionIndex']
@@ -82,7 +80,7 @@ class SaveView(View):
                 transaction_data['to']
             )
             transaction.v = transaction_data['v']
-            transaction.value = w3_client.fromWei(transaction_data['value'], 'ether')
+            transaction.value = transaction_data['value']
             transaction.save()
 
         # Create uncle block if exists
@@ -104,7 +102,7 @@ class SaveView(View):
             uncle_block.number = uncle_data['number']
             uncle_block.parent_hash = Block.objects.filter(
                 hash=uncle_data['parentHash']
-            )
+            ).first()
             uncle_block.size = uncle_data['size']
             uncle_block.timestamp = uncle_data['timestamp']
             uncle_block.total_difficulty = uncle_data['totalDifficulty']
@@ -121,14 +119,14 @@ class SaveView(View):
 
             # Save transaction relation for uncle block
             transaction_index = 0
-            for transaction in uncle_block['transactions']:
+            for transaction in uncle_data['transactions']:
                 transaction = Transaction.objects.filter(hash=transaction)
 
-                if not transaction.exits():
+                if not transaction.exists():
                     continue
 
                 Fork.objects.create(
-                    hash=transaction,
+                    hash=transaction.first(),
                     index=transaction_index,
                     uncle_hash=uncle_block
                 )

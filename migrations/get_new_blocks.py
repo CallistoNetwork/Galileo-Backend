@@ -16,7 +16,6 @@ def send_to_endpoint(block_hash, w3_type):
     print(res.json().get('number'))
 
 
-
 async def get_blocks(w3_filter, w3_type, poll_intervall):
     while w3.isConnected():
         for event in w3_filter.get_new_entries():
