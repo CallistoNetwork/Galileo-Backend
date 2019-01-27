@@ -132,7 +132,7 @@ class Fork(TimeStampModel):
         'transactions.Transaction',
         on_delete=models.CASCADE
     )
-    index = models.IntegerField,
+    index = models.SmallIntegerField()
     uncle_hash = models.ForeignKey(
         'blocks.Block',
         on_delete=models.CASCADE
