@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.urls import reverse
 from django.views import View
 from rest_framework.views import APIView
@@ -12,18 +12,16 @@ from .utils import web3_to_dict
 from address.models import Address
 from blocks.models import Block, SecondDegreeRelation
 from transactions.models import Transaction, Fork
-from decimal import Decimal
 
-import json
+parity_url = settings.PARITY_NODE_URL
+w3_client = Web3(WebsocketProvider(parity_url))
 
 
 class SaveView(View):
 
     def get(self, request, *args, **kwargs):
-        parity_url = settings.PARITY_NODE_URL
-        block_hash = kwargs['hash']
 
-        w3_client = Web3(WebsocketProvider(parity_url))
+        block_hash = kwargs['hash']
 
         block_info = w3_client.eth.getBlock(block_hash)
 
@@ -31,57 +29,114 @@ class SaveView(View):
 
         miner = self.get_address(block_data['miner'])
 
-        # Create Block Instance
-        block = Block()
-        block.difficulty = block_data['difficulty']
-        block.gas_limit = block_data['gasLimit']
-        block.gas_used = block_data['gasUsed']
-        block.hash = block_data['hash']
-        block.miner = miner
-        block.nonce = block_data['nonce']
-        block.number = block_data['number']
-        block.parent_hash = Block.objects.filter(
-            hash=block_data['parentHash']
-        ).first()
-        block.size = block_data['size']
-        block.timestamp = block_data['timestamp']
-        block.total_difficulty = block_data['totalDifficulty']
-        block.save()
+        existing_block = Block.objects.filter(
+            hash=block_data['hash']
+        )
+
+        if existing_block.exists():
+            block = existing_block.first()
+            block.difficulty = block_data['difficulty']
+            block.gas_limit = block_data['gasLimit']
+            block.gas_used = block_data['gasUsed']
+            block.hash = block_data['hash']
+            block.miner = miner
+            block.nonce = block_data['nonce']
+            block.number = block_data['number']
+            block.parent_hash = Block.objects.filter(
+                hash=block_data['parentHash']
+            ).first()
+            block.size = block_data['size']
+            block.timestamp = block_data['timestamp']
+            block.total_difficulty = block_data['totalDifficulty']
+            block.save()
+        else:
+            # Create Block Instance
+            block = Block()
+            block.difficulty = block_data['difficulty']
+            block.gas_limit = block_data['gasLimit']
+            block.gas_used = block_data['gasUsed']
+            block.hash = block_data['hash']
+            block.miner = miner
+            block.nonce = block_data['nonce']
+            block.number = block_data['number']
+            block.parent_hash = Block.objects.filter(
+                hash=block_data['parentHash']
+            ).first()
+            block.size = block_data['size']
+            block.timestamp = block_data['timestamp']
+            block.total_difficulty = block_data['totalDifficulty']
+            block.save()
 
         # Create transactions for block
         for transaction in block_data['transactions']:
             transaction_info = w3_client.eth.getTransaction(transaction)
             transaction_data = web3_to_dict(transaction_info)
 
-            transaction = Transaction()
+            existing_transaction = Transaction.objects.filter(
+                hash=transaction_data['hash']
+            )
 
-            transaction.block_hash = block
-            transaction.block_number = block.number
-            # transaction.cumulative_gas_used = ''
-            transaction.created_contract_address_hash = None
-            transaction.error = ''
-            transaction.from_address_hash = self.get_address(
-                transaction_data['from']
-            )
-            transaction.gas = transaction_data['gas']
-            transaction.gas_price = transaction_data['gasPrice']
-            transaction.gas_used = (
-               transaction_data['gas'] * transaction_data['gasPrice']
-            )
-            transaction.hash = transaction_data['hash']
-            transaction.index = transaction_data['transactionIndex']
-            transaction.input = transaction_data['input']
-            transaction.internal_transactions_indexed_at = None
-            transaction.nonce = transaction_data['nonce']
-            transaction.r = transaction_data['r']
-            transaction.s = transaction_data['s']
-            # transaction.status = ''
-            transaction.to_address_hash = self.get_address(
-                transaction_data['to']
-            )
-            transaction.v = transaction_data['v']
-            transaction.value = transaction_data['value']
-            transaction.save()
+            if existing_transaction.exists():
+                transaction = existing_transaction.first()
+
+                transaction.block_hash = block
+                transaction.block_number = block.number
+                # transaction.cumulative_gas_used = ''
+                transaction.created_contract_address_hash = None
+                transaction.error = ''
+                transaction.from_address_hash = self.get_address(
+                    transaction_data['from']
+                )
+                transaction.gas = transaction_data['gas']
+                transaction.gas_price = transaction_data['gasPrice']
+                transaction.gas_used = (
+                        transaction_data['gas'] * transaction_data['gasPrice']
+                )
+                transaction.hash = transaction_data['hash']
+                transaction.index = transaction_data['transactionIndex']
+                transaction.input = transaction_data['input']
+                transaction.internal_transactions_indexed_at = None
+                transaction.nonce = transaction_data['nonce']
+                transaction.r = transaction_data['r']
+                transaction.s = transaction_data['s']
+                # transaction.status = ''
+                transaction.to_address_hash = self.get_address(
+                    transaction_data['to']
+                )
+                transaction.v = transaction_data['v']
+                transaction.value = transaction_data['value']
+                transaction.save()
+
+            else:
+                transaction = Transaction()
+
+                transaction.block_hash = block
+                transaction.block_number = block.number
+                # transaction.cumulative_gas_used = ''
+                transaction.created_contract_address_hash = None
+                transaction.error = ''
+                transaction.from_address_hash = self.get_address(
+                    transaction_data['from']
+                )
+                transaction.gas = transaction_data['gas']
+                transaction.gas_price = transaction_data['gasPrice']
+                transaction.gas_used = (
+                   transaction_data['gas'] * transaction_data['gasPrice']
+                )
+                transaction.hash = transaction_data['hash']
+                transaction.index = transaction_data['transactionIndex']
+                transaction.input = transaction_data['input']
+                transaction.internal_transactions_indexed_at = None
+                transaction.nonce = transaction_data['nonce']
+                transaction.r = transaction_data['r']
+                transaction.s = transaction_data['s']
+                # transaction.status = ''
+                transaction.to_address_hash = self.get_address(
+                    transaction_data['to']
+                )
+                transaction.v = transaction_data['v']
+                transaction.value = transaction_data['value']
+                transaction.save()
 
         # Create uncle block if exists
         for uncle in block_data['uncles']:
@@ -91,22 +146,44 @@ class SaveView(View):
 
             miner = self.get_address(uncle_data['miner'])
 
-            uncle_block = Block()
-            uncle_block.consensus = False
-            uncle_block.difficulty = uncle_data['difficulty']
-            uncle_block.gas_limit = uncle_data['gasLimit']
-            uncle_block.gas_used = uncle_data['gasUsed']
-            uncle_block.hash = uncle_data['hash']
-            uncle_block.miner = miner
-            uncle_block.nonce = uncle_data['nonce']
-            uncle_block.number = uncle_data['number']
-            uncle_block.parent_hash = Block.objects.filter(
-                hash=uncle_data['parentHash']
-            ).first()
-            uncle_block.size = uncle_data['size']
-            uncle_block.timestamp = uncle_data['timestamp']
-            uncle_block.total_difficulty = uncle_data['totalDifficulty']
-            uncle_block.save()
+            existing_uncle_block = Block.objects.filter(
+                hash=uncle_data['hash']
+            )
+
+            if existing_uncle_block.exists():
+                uncle_block = existing_uncle_block.first()
+                uncle_block.consensus = False
+                uncle_block.difficulty = uncle_data['difficulty']
+                uncle_block.gas_limit = uncle_data['gasLimit']
+                uncle_block.gas_used = uncle_data['gasUsed']
+                uncle_block.hash = uncle_data['hash']
+                uncle_block.miner = miner
+                uncle_block.nonce = uncle_data['nonce']
+                uncle_block.number = uncle_data['number']
+                uncle_block.parent_hash = Block.objects.filter(
+                    hash=uncle_data['parentHash']
+                ).first()
+                uncle_block.size = uncle_data['size']
+                uncle_block.timestamp = uncle_data['timestamp']
+                uncle_block.total_difficulty = uncle_data['totalDifficulty']
+                uncle_block.save()
+            else:
+                uncle_block = Block()
+                uncle_block.consensus = False
+                uncle_block.difficulty = uncle_data['difficulty']
+                uncle_block.gas_limit = uncle_data['gasLimit']
+                uncle_block.gas_used = uncle_data['gasUsed']
+                uncle_block.hash = uncle_data['hash']
+                uncle_block.miner = miner
+                uncle_block.nonce = uncle_data['nonce']
+                uncle_block.number = uncle_data['number']
+                uncle_block.parent_hash = Block.objects.filter(
+                    hash=uncle_data['parentHash']
+                ).first()
+                uncle_block.size = uncle_data['size']
+                uncle_block.timestamp = uncle_data['timestamp']
+                uncle_block.total_difficulty = uncle_data['totalDifficulty']
+                uncle_block.save()
 
             # Save relation between nephew and uncle
             SecondDegreeRelation.objects.get_or_create(
